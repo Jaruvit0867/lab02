@@ -1,19 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-interface Task {
-    _id: string;
-    title: string;
-    description: string;
-    status: string;
-    dueDate: string;
-}
-
 export default function Home() {
-    const [tasks, setTasks] = useState<Task[]>([]);
+    const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
 
-    // โหลดงานทั้งหมด
+    // โหลดงานทั้งหมดจาก API
     useEffect(() => {
         axios.get('/api/tasks')
             .then(response => setTasks(response.data.data))
@@ -31,7 +23,7 @@ export default function Home() {
     };
 
     // อัพเดทสถานะงาน
-    const updateTaskStatus = (id: string, newStatus: string) => {
+    const updateTaskStatus = (id, newStatus) => {
         axios.put(`/api/tasks/${id}`, { status: newStatus })
             .then(response => {
                 setTasks(tasks.map(task => task._id === id ? response.data.data : task));
@@ -40,7 +32,7 @@ export default function Home() {
     };
 
     // ลบงาน
-    const deleteTask = (id: string) => {
+    const deleteTask = (id) => {
         axios.delete(`/api/tasks/${id}`)
             .then(() => {
                 setTasks(tasks.filter(task => task._id !== id));
